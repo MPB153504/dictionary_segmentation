@@ -10,7 +10,8 @@ A graphical user interface makes the method interactive such that the user can m
 ![](media/demo.gif)
 
 ## How to run
-You can use the method by itself (see example.py) or run my_gui.py to run the user interface (PyQt 5.11.3 is required). 
+1. You can apply the method by itself (see example.py). Note that the method was implemented for the GUI so some parts might seem unlogical. 
+2. You can use the GUI by running the my_gui.py (PyQt 5.11.3 is required). 
 
 *I recommended creating a Python environment with the exact versions as below*
 
