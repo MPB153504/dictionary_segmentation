@@ -1,0 +1,2 @@
+# dictionary_segmentation
+Interactive Dictionary Segmentation Method
