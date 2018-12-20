@@ -19,14 +19,35 @@ from scipy import sparse
 class dictionarySegmentationModel:
     def __init__(self):
 
-        # Define parameters
-        self.n_patches = 5000
-        self.n_clusters = 500
-        self.patch_size = 7
+        """
+        Options:
+        When using two diffusion steps, we use the resulted probability image
+        and run the iteration again. We can apply binarisation of the labels
+        between the two diffusion steps. For binarisation we identify the class
+        of the highest probability for each pixel, and apply {0, 1} labelling.
+        The operation of overwriting imposes the original user-provided
+        labelling to all labelled pixels in between the two diffusion steps
 
+        Parameters:
+        n_patches is the number of random patches used in the clustering of
+        features. n_clusters is the number of clusters, The number of clusters
+        should be large, measured in hundreds or thousands, and is roughly
+        reflecting the variability in the image. patch_size is thes ize of
+        patches. The size of the patches should reflect the scale of the
+        distinctive image features and could, for example, be 9 pixels. For
+        simplicity, we always assume that the size of the image patches M is
+        odd and patches are centred around the central pixel.
+        """
+
+        # Options
         self.two_step_diffusion = False
         self.overwrite = False
         self.binarisation = False
+
+        # Define parameters
+        self.n_patches = 5000
+        self.n_clusters = 500
+        self.patch_size = 7 # has to be odd number, min is 3
 
         self.probability_image = None
         self.segmentation_image = None
@@ -57,9 +78,9 @@ class dictionarySegmentationModel:
         """
 
         self.row, self.col = self.im.shape[0:2]
-        intensity_dictionary = self.cluster_patches_kmeans_batches(self.im, self.patch_size,self.n_patches,self.n_clusters)
+        intensity_dictionary = self.cluster_patches_kmeans_batches(self.im, self.patch_size, self.n_patches, self.n_clusters)
         A, A_vector = self.create_assignments(intensity_dictionary, self.im, self.patch_size)
-        B = self.construct_biadjacency_mat(A_vector,self.patch_size,self.n_clusters,self.row,self.col)
+        B = self.construct_biadjacency_mat(A_vector, self.patch_size, self.n_clusters, self.row, self.col)
         self.T1, self.T2 = self.get_transition_mat(B)
 
     def prepare_labels(self, label_im_color):
@@ -109,11 +130,12 @@ class dictionarySegmentationModel:
 
     def iterate_dictionary(self):
         """ After preprocessing and loading a label image, user can iterate through
-        the dictionary. User chooses if he wants to iterate once or twice and if he wants
-        to binarize the image between the iterations. Additionally he can choose if he
-        wants to overwrite his labels onto the image between diffusion steps (iterations)
-        Finally the segmentation is colored according to the original colors of the labels
-        and returned as a image. Probability images are also available if user wants.
+        the dictionary. User chooses if he wants to iterate once or twice and
+        if he wants to binarize the image between the iterations. Additionally
+        he can choose if he wants to overwrite his labels onto the image
+        between diffusion steps (iterations) Finally the segmentation is
+        colored according to the original colors of the labels and returned as
+        a image. Probability images are also available if user wants.
         """
 
         if self.two_step_diffusion:
@@ -152,8 +174,9 @@ class dictionarySegmentationModel:
         self.segmentation_image = result_color
 
     def create_color_im(self, result_im):
-        """ As the segmented image is in layers for each class we want to color the final
-        image segmentation accordingly to the labels that the user provided.
+        """ As the segmented image is in layers for each class we want to color
+        the final image segmentation accordingly to the labels that the user
+        provided.
         """
 
         row, col = result_im.shape
