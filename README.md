@@ -11,6 +11,29 @@ A graphical user interface makes the method interactive such that the user can m
 
 ## How to run
 1. You can apply the method by itself (see example.py). Note that the method was implemented for the GUI so some parts might seem unlogical. 
+
+'''
+import numpy as np
+from PIL import Image
+from dictionary_segmentation import dict_seg
+from matplotlib import pyplot as plt
+
+dsm = dict_seg.dictionarySegmentationModel()
+dsm.load_image('example_images/dummy.png')
+dsm.preprocess()
+
+label_im = np.asarray(Image.open('example_images/dummy_label.png'))
+
+dsm.prepare_labels(label_im[:,:,0:3])
+dsm.iterate_dictionary()
+
+seg_im = dsm.segmentation_image
+prob_im = dsm.probability_image
+
+plt.imshow(seg_im)
+plt.show()
+'''
+
 2. You can use the GUI by running the my_gui.py (PyQt 5.11.3 is required). 
 
 *I recommended creating a Python environment with the exact versions as below*
@@ -19,11 +42,17 @@ A graphical user interface makes the method interactive such that the user can m
 Python 3.5.2
 
 PyQt5==5.11.3
+
 PyQt5-sip==4.19.13
+
 numpy==1.13.3
+
 qimage2ndarray==1.7
+
 scipy==1.0.0
+
 scikit-learn==0.19.1
+
 Pillow==4.3.0
 
 [1]: http://orbit.dtu.dk/en/publications/dictionary-based-image-segmentation(3b08c76e-7c7a-4bf9-80e6-c4146513a7f6).html
